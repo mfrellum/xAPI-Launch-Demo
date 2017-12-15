@@ -1,0 +1,49 @@
+version: '3'
+# Warning: under construction. Come back later.
+
+services:
+  xAPIlaunchdemo:
+    image: mfrellum/xAPIlaunchdemo
+    build: .
+    links:
+      - launchdb:mongo
+    ports:
+      - 80:80
+
+  launchdb:
+    image: tutum/mongodb:3.2
+    environment:
+      MONGODB_DATABASE: 'launch'
+      MONGODB_USER: 'launch'
+      MONGODB_PASS: 'launch'
+    ports:
+      - "27017:27017"
+      - "28017:28017"
+      
+  LLweb:
+    image: mfrellum/learninglocker:1.14.0-http
+#    build: https://github.com/mfrellum/learninglocker.git#1.14.0-http
+    links:
+      - LLdb:mongo
+    environment:
+      LEARNINGLOCKER_DB_HOST: 'mongo:27017' # Have to set this for now because of change to version 2 of docker-compose file
+      APP_URL: 'lrs.dockerhost' # Map in /etc/hosts
+      APP_SECRET_KEY: 'CHANGEME12345678'
+      SMTP_SERVER: 'smtp.sendgrid.net'
+      SMTP_PORT: 587
+      SMTP_USER: 'your own'
+      SMTP_PASSWORD: 'your own'
+      EMAIL_FROM_NAME: 'Learning Locker LRS Docker Container'
+      EMAIL_FROM_ADDRESS: 'learninglocker@lrs.localhost'
+    ports:
+      - "8099:80"
+  LLdb:
+#    container_name: learninglocker-db
+    image: tutum/mongodb:3.2
+    environment:
+      MONGODB_DATABASE: 'learninglocker'
+      MONGODB_USER: 'learninglocker'
+      MONGODB_PASS: 'learninglocker'
+    ports:
+      - "27017:27017"
+      - "28017:28017"
