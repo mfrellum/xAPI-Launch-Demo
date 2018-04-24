@@ -5,11 +5,18 @@ services:
   xAPIlaunchdemo:
     image: mfrellum/xAPIlaunchdemo
     build: .
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./app:/home/node/app
     links:
       - launchdb:mongo
     ports:
-      - 80:80
-
+      - 8081:8081
+    command: "npm start"
+    
   launchdb:
     image: tutum/mongodb:3.2
     environment:
